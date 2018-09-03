@@ -1,0 +1,83 @@
+version: '2'
+services:
+  consul-node-1:
+    container_name: consul-cluster-node-1
+    image: consul:1.2.2
+    restart: always
+    logging:
+      driver: journald
+      options:
+        tag: consul.node0.prod
+    networks:
+      default:
+        aliases:
+          - consul-node-1
+        ipv4_address: 192.168.4.2
+    ports:
+      - "127.0.0.1:18500:8500"
+    volumes:
+      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-cluster-node-1.json:/consul/config/server.json:ro"
+      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/data/consul-cluster-node-1:/consul/data:rw"
+    command: ["consul", "agent", "-config-dir", "/consul/config/"]
+  
+  consul-node-2:
+    container_name: consul-cluster-node-2
+    image: consul:1.2.2
+    restart: always
+    logging:
+      driver: journald
+      options:
+        tag: consul.node0.prod
+    networks:
+      default:
+        aliases:
+          - consul-node-2
+        ipv4_address: 192.168.4.3
+    volumes:
+      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-cluster-node-2.json:/consul/config/server.json:ro"
+      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/data/consul-cluster-node-2:/consul/data:rw"
+    command: ["consul", "agent", "-config-dir", "/consul/config/"]
+    
+  consul-node-3:
+    container_name: consul-cluster-node-3
+    image: consul:1.2.2
+    restart: always
+    logging:
+      driver: journald
+      options:
+        tag: consul.node0.prod
+    networks:
+      default:
+        aliases:
+          - consul-node-3
+        ipv4_address: 192.168.4.4
+    volumes:
+      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-cluster-node-3.json:/consul/config/server.json:ro"
+      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/data/consul-cluster-node-3:/consul/data:rw"
+    command: ["consul", "agent", "-config-dir", "/consul/config/"]
+
+
+
+#  vault-node-1:
+#    image: vault:0.11.0
+#    container_name: dev-vault
+#    environment:
+#      VAULT_DEV_ROOT_TOKEN_ID: b4d31592-8e6f-583e-2def-0e0f962da3e9
+#      VAULT_LOG_LEVEL: debug
+#    cap_add:
+#      - IPC_LOCK
+#    dns:
+#      - 10.216.40.4
+#      - 10.216.42.5
+#    ports:
+#      - "127.0.0.1:18200:8200"
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.4.0/26
+        gateway: 192.168.4.1
+

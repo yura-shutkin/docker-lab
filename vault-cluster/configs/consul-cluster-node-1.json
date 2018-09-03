@@ -1,0 +1,27 @@
+{
+    "acl_datacenter": "test-cluster",
+    "acl_default_policy": "deny",
+    "acl_down_policy": "deny",
+    "acl_token": "9efc2b9b-7a1e-a80d-2bae-f2211fd4e1bd",
+    "datacenter": "test-cluster",
+    "data_dir": "/consul/data",
+    "encrypt": "FFopwfMKsi+awZHrHzFLLQ==",
+    "log_level": "INFO",
+    "enable_syslog": false,
+    "enable_debug": false,
+    "node_name": "node1",
+    "server": true,
+    "ui": true,
+    "ports": {
+        "http": 8500
+    },
+    "addresses": {
+        "http": "0.0.0.0"
+    },
+    "bind_addr": "192.168.4.2",
+    "bootstrap_expect": 3,
+    "leave_on_terminate": true,
+    "skip_leave_on_interrupt": true,
+    "rejoin_after_leave": true,
+    "retry_join": ["consul-node-1", "consul-node-2", "consul-node-3"]
+}
