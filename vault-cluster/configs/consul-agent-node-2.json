@@ -1,0 +1,23 @@
+{
+  "acl_agent_token": "3ebfd7b7-55ee-e9c4-e8bb-f8bf62f1a603",
+  "acl_token": "3ebfd7b7-55ee-e9c4-e8bb-f8bf62f1a603",
+  "bind_addr": "192.168.4.7",
+  "datacenter": "test-cluster",
+  "data_dir": "/consul/data",
+  "encrypt": "FFopwfMKsi+awZHrHzFLLQ==",
+  "log_level": "INFO",
+  "enable_syslog": false,
+  "enable_debug": false,
+  "enable_script_checks": false,
+  "node_name": "client-srv-node-2",
+  "node_meta": {},
+  "server": false,
+  "rejoin_after_leave": true,
+  "retry_join": ["consul-node-1", "consul-node-2", "consul-node-3"],
+  "gossip_lan": {
+    "gossip_nodes": 2,
+    "gossip_interval": "0",
+    "probe_interval": "5s",
+    "probe_timeout": "3s"
+  }
+}
