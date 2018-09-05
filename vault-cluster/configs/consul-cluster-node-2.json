@@ -23,5 +23,5 @@
     "leave_on_terminate": true,
     "skip_leave_on_interrupt": true,
     "rejoin_after_leave": true,
-    "retry_join": ["consul-node-1", "consul-node-2", "consul-node-3"]
+    "retry_join": ["consul-node-1", "consul-node-2", "consul-node-3", "consul-node-4", "consul-node-5"]
 }

@@ -9,7 +9,7 @@
     "log_level": "INFO",
     "enable_syslog": false,
     "enable_debug": false,
-    "node_name": "node1",
+    "node_name": "node4",
     "server": true,
     "ui": true,
     "ports": {
@@ -18,7 +18,7 @@
     "addresses": {
         "http": "0.0.0.0"
     },
-    "bind_addr": "192.168.4.2",
+    "bind_addr": "192.168.4.9",
     "bootstrap_expect": 3,
     "leave_on_terminate": true,
     "skip_leave_on_interrupt": true,
