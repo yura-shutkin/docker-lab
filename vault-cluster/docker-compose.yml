@@ -13,8 +13,6 @@ services:
         aliases:
           - consul-node-1
         ipv4_address: 192.168.4.2
-    ports:
-      - "127.0.0.1:18500:8500"
     volumes:
       - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-cluster-node-1.json:/consul/config/server.json:ro"
       - "/home/yshutkin/develop/common/docker-lab/vault-cluster/data/consul-cluster-node-1:/consul/data:rw"
@@ -93,7 +91,12 @@ services:
     command: ["consul", "agent", "-config-dir", "/consul/config/"]
 
   vault-client-1:
-    image: vault-consul-client:1.0.0
+    build:
+      context: ./client-srv
+      args:
+        CONSULE_VERSION: 1.2.2
+        VAULT_VERSION: 0.11.1
+    image: vault-consul-client:node-1
     container_name: vault-client-1
     cap_add:
       - IPC_LOCK
@@ -105,11 +108,14 @@ services:
     volumes:
       - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-agent-node-1.json:/consul/config/server.json:ro"
       - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/vault-config-node-1.hcl:/vault/config/config.hcl:ro"
-    ports:
-      - "127.0.0.1:20201:8200"
 
   vault-client-2:
-    image: vault-consul-client:1.0.0
+    build:
+      context: ./client-srv
+      args:
+        CONSULE_VERSION: 1.2.2
+        VAULT_VERSION: 0.11.1
+    image: vault-consul-client:node-2
     container_name: vault-client-2
     cap_add:
       - IPC_LOCK
@@ -121,11 +127,14 @@ services:
     volumes:
       - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-agent-node-2.json:/consul/config/server.json:ro"
       - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/vault-config-node-2.hcl:/vault/config/config.hcl:ro"
-    ports:
-      - "127.0.0.1:20202:8200"
 
   vault-client-3:
-    image: vault-consul-client:1.0.0
+    build:
+      context: ./client-srv
+      args:
+        CONSULE_VERSION: 1.2.2
+        VAULT_VERSION: 0.11.1
+    image: vault-consul-client:node-3
     container_name: vault-client-3
     cap_add:
       - IPC_LOCK
@@ -137,8 +146,6 @@ services:
     volumes:
       - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-agent-node-3.json:/consul/config/server.json:ro"
       - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/vault-config-node-3.hcl:/vault/config/config.hcl:ro"
-    ports:
-      - "127.0.0.1:20203:8200"
 
 networks:
   default:
