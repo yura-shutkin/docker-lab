@@ -16,6 +16,7 @@ services:
     volumes:
       - "./configs/consul-server/consul-cluster-node-1.json:/consul/config/server.json:ro"
       - "./data/consul-cluster-node-1:/consul/data:rw"
+      - "./consul.snap:/consul.snap:ro"
     command: ["consul", "agent", "-config-dir", "/consul/config/"]
   
   consul-node-2:

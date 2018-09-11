@@ -20,14 +20,13 @@ cleanup: ## stop project and remove data
 startup: ## launch project
 	docker-compose --project-name=vault-cluster up -d
 
-.PHONY: startup
+.PHONY: restart
 restart: ## restart project
 	docker-compose --project-name=vault-cluster restart
 
-.PHONY: restore-snap
-restore-snap: ## Restore consul snapshot
-	curl -s -X PUT http://127.0.0.1:18500/v1/acl/bootstrap | sed -e 's/.*:"//g' -e 's/".*//g'
-	consul snapshot restore -http-addr=127.0.0.1:18500 --token=$CONSUL_BOOTSTRAP consul.snap
+.PHONY: consul-restore
+consul-restore: ## Restore consul snapshot
+	scripts/consul_restore.sh
 
 .PHONY: vault-unseal
 vault-unseal: ## Outputs all ssh keys in authorized_keys style
