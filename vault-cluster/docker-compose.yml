@@ -1,4 +1,4 @@
-version: '2'
+version: '3.2'
 services:
   consul-node-1:
     container_name: consul-cluster-node-1
@@ -14,8 +14,8 @@ services:
           - consul-node-1
         ipv4_address: 192.168.4.2
     volumes:
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-cluster-node-1.json:/consul/config/server.json:ro"
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/data/consul-cluster-node-1:/consul/data:rw"
+      - "./configs/consul-server/consul-cluster-node-1.json:/consul/config/server.json:ro"
+      - "./data/consul-cluster-node-1:/consul/data:rw"
     command: ["consul", "agent", "-config-dir", "/consul/config/"]
   
   consul-node-2:
@@ -32,8 +32,8 @@ services:
           - consul-node-2
         ipv4_address: 192.168.4.3
     volumes:
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-cluster-node-2.json:/consul/config/server.json:ro"
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/data/consul-cluster-node-2:/consul/data:rw"
+      - "./configs/consul-server/consul-cluster-node-2.json:/consul/config/server.json:ro"
+      - "./data/consul-cluster-node-2:/consul/data:rw"
     command: ["consul", "agent", "-config-dir", "/consul/config/"]
     
   consul-node-3:
@@ -50,8 +50,8 @@ services:
           - consul-node-3
         ipv4_address: 192.168.4.4
     volumes:
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-cluster-node-3.json:/consul/config/server.json:ro"
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/data/consul-cluster-node-3:/consul/data:rw"
+      - "./configs/consul-server/consul-cluster-node-3.json:/consul/config/server.json:ro"
+      - "./data/consul-cluster-node-3:/consul/data:rw"
     command: ["consul", "agent", "-config-dir", "/consul/config/"]
 
   consul-node-4:
@@ -68,8 +68,8 @@ services:
           - consul-node-3
         ipv4_address: 192.168.4.9
     volumes:
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-cluster-node-4.json:/consul/config/server.json:ro"
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/data/consul-cluster-node-4:/consul/data:rw"
+      - "./configs/consul-server/consul-cluster-node-4.json:/consul/config/server.json:ro"
+      - "./data/consul-cluster-node-4:/consul/data:rw"
     command: ["consul", "agent", "-config-dir", "/consul/config/"]
 
   consul-node-5:
@@ -86,8 +86,8 @@ services:
           - consul-node-3
         ipv4_address: 192.168.4.10
     volumes:
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-cluster-node-5.json:/consul/config/server.json:ro"
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/data/consul-cluster-node-5:/consul/data:rw"
+      - "./configs/consul-server/consul-cluster-node-5.json:/consul/config/server.json:ro"
+      - "./data/consul-cluster-node-5:/consul/data:rw"
     command: ["consul", "agent", "-config-dir", "/consul/config/"]
 
   vault-client-1:
@@ -106,8 +106,8 @@ services:
           - vault-client-1
         ipv4_address: 192.168.4.6
     volumes:
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-agent-node-1.json:/consul/config/server.json:ro"
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/vault-config-node-1.hcl:/vault/config/config.hcl:ro"
+      - "./configs/consul-client/consul-agent-node-1.json:/consul/config/server.json:ro"
+      - "./configs/consul-client/vault-config-node-1.hcl:/vault/config/config.hcl:ro"
 
   vault-client-2:
     build:
@@ -125,8 +125,8 @@ services:
           - vault-client-1
         ipv4_address: 192.168.4.7
     volumes:
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-agent-node-2.json:/consul/config/server.json:ro"
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/vault-config-node-2.hcl:/vault/config/config.hcl:ro"
+      - "./configs/consul-client/consul-agent-node-2.json:/consul/config/server.json:ro"
+      - "./configs/consul-client/vault-config-node-2.hcl:/vault/config/config.hcl:ro"
 
   vault-client-3:
     build:
@@ -144,8 +144,21 @@ services:
           - vault-client-3
         ipv4_address: 192.168.4.8
     volumes:
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/consul-agent-node-3.json:/consul/config/server.json:ro"
-      - "/home/yshutkin/develop/common/docker-lab/vault-cluster/configs/vault-config-node-3.hcl:/vault/config/config.hcl:ro"
+      - "./configs/consul-client/consul-agent-node-3.json:/consul/config/server.json:ro"
+      - "./configs/consul-client/vault-config-node-3.hcl:/vault/config/config.hcl:ro"
+
+  web-bln-1:
+    image: nginx:1.14.0
+    container_name: web-bln-1
+    networks:
+      default:
+        aliases:
+          - web-bln-1
+        ipv4_address: 192.168.4.5
+    volumes:
+      - "./configs/nginx/conf.d/vault.local.conf:/etc/nginx/conf.d/vault.local.conf:ro"
+      - "./configs/nginx/certs:/etc/nginx/certs:ro"
+      - "./configs/nginx/includes.d:/etc/nginx/includes.d:ro"
 
 networks:
   default:
@@ -154,5 +167,3 @@ networks:
       driver: default
       config:
       - subnet: 192.168.4.0/26
-        gateway: 192.168.4.1
-
