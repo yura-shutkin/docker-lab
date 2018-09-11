@@ -31,5 +31,4 @@ restore-snap: ## Restore consul snapshot
 
 .PHONY: vault-unseal
 vault-unseal: ## Outputs all ssh keys in authorized_keys style
-	VAULT_KEY=$(cat vault-key)
-	for SRV in 192.168.4.{6..8}; do vault operator unseal -address=http://$SRV:8200 $VAULT_KEY; done
+	scripts/unseal_vault.sh
