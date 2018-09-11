@@ -31,3 +31,10 @@ consul-restore: ## Restore consul snapshot
 .PHONY: vault-unseal
 vault-unseal: ## Outputs all ssh keys in authorized_keys style
 	scripts/unseal_vault.sh
+
+.PHONY: bootstrap
+bootstrap: ## Launch project and unseal after kv restore
+	make startup
+	sleep 10
+	make consul-restore
+	make vault-unseal
