@@ -156,7 +156,7 @@ services:
           - web-bln-1
         ipv4_address: 192.168.4.5
     volumes:
-      - "./configs/nginx/conf.d/vault.local.conf:/etc/nginx/conf.d/vault.local.conf:ro"
+      - "./configs/nginx/conf.d:/etc/nginx/conf.d:ro"
       - "./configs/nginx/certs:/etc/nginx/certs:ro"
       - "./configs/nginx/includes.d:/etc/nginx/includes.d:ro"
 
