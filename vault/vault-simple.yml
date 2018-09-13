@@ -11,5 +11,16 @@ services:
     dns:
       - 10.216.40.4
       - 10.216.42.5
+    logging:
+      driver: json-file
+      options:
+        labels: env,service,clustered
+        env: dev
+        max-size: "10M"
+        max-file: "2"
+    labels:
+      env: dev
+      service: vault
+      clustered: 'false'
     ports:
       - "127.0.0.1:18200:8200"
