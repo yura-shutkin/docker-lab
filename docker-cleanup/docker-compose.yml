@@ -1,0 +1,17 @@
+---
+version: '2'
+services:
+  docker-cleaner:
+    image: meltwater/docker-cleanup:1.8.0
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+      - "/var/lib/docker:/var/lib/docker:rw"
+    environment:
+      CLEAN_PERIOD: 1800
+      DELAY_TIME: 1800
+      KEEP_IMAGES: ""
+      KEEP_CONTAINERS: ""
+      KEEP_CONTAINERS_NAMED: ""
+      LOOP: "true"
+      DEBUG: 0
+    network_mode: "none"
