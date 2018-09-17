@@ -1,0 +1,116 @@
+---
+version: '2'
+services:
+  elastic-node-1:
+    container_name: elastic-node-1
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-file: "2"
+        max-size: "50M"
+    networks:
+      default:
+        aliases:
+          - elastic-node-1
+        ipv4_address: 192.168.5.2
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    environment:
+      cluster.name: es-cluster
+      bootstrap.memory_lock: "true"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 1G
+
+  elastic-node-2:
+    container_name: elastic-node-2
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-file: "2"
+        max-size: "50M"
+    networks:
+      default:
+        aliases:
+          - elastic-node-2
+        ipv4_address: 192.168.5.3
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+    environment:
+      cluster.name: es-cluster
+      bootstrap.memory_lock: "true"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      discovery.zen.ping.unicast.hosts: elastic-node-1
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 1G
+
+  elastic-node-3:
+    container_name: elastic-node-3
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-file: "2"
+        max-size: "50M"
+    networks:
+      default:
+        aliases:
+          - elastic-node-3
+        ipv4_address: 192.168.5.4
+    volumes:
+      - esdata3:/usr/share/elasticsearch/data
+    environment:
+      cluster.name: es-cluster
+      bootstrap.memory_lock: "true"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      discovery.zen.ping.unicast.hosts: elastic-node-1
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 1G
+
+  kibana:
+    container_name: kibana-1
+    image: docker.elastic.co/kibana/kibana:6.4.0
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_URL: http://192.168.5.2:9200
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-file: "2"
+        max-size: "50M"
+    networks:
+      default:
+        aliases:
+          - kibana-1
+        ipv4_address: 192.168.5.5
+
+volumes:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
+  esdata3:
+    driver: local
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 192.168.5.0/28
