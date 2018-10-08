@@ -3,6 +3,8 @@ storage "consul" {
   path = "vault/"
   scheme = "http"
   token = "d565f7b1-a1ac-f91a-eaa5-820ca3f03124"
+  service_tags = "vault-dev"
+  service_address = "192.168.4.8"
 }
 
 listener "tcp" {
@@ -13,5 +15,5 @@ listener "tcp" {
 
 ui = "true"
 
-# api_addr = "http://192.168.4.5:8200"
-# cluster_addr = "https://192.168.4.5:8200"
+api_addr = "http://192.168.4.8:8200"
+cluster_addr = "https://192.168.4.8:8201"
