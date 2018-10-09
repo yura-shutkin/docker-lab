@@ -95,8 +95,8 @@ services:
     build:
       context: ./client-srv
       args:
-        CONSUL_VERSION: 1.2.2
-        VAULT_VERSION: 0.11.1
+        CONSUL_VERSION: 1.2.3
+        VAULT_VERSION: 0.11.3
     image: vault-consul-client:node-1
     container_name: vault-client-1
     cap_add:
@@ -114,8 +114,8 @@ services:
     build:
       context: ./client-srv
       args:
-        CONSUL_VERSION: 1.2.2
-        VAULT_VERSION: 0.11.1
+        CONSUL_VERSION: 1.2.3
+        VAULT_VERSION: 0.11.3
     image: vault-consul-client:node-2
     container_name: vault-client-2
     cap_add:
@@ -133,8 +133,8 @@ services:
     build:
       context: ./client-srv
       args:
-        CONSUL_VERSION: 1.2.2
-        VAULT_VERSION: 0.11.1
+        CONSUL_VERSION: 1.2.3
+        VAULT_VERSION: 0.11.3
     image: vault-consul-client:node-3
     container_name: vault-client-3
     cap_add:
