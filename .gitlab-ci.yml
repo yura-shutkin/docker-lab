@@ -1,0 +1,11 @@
+---
+stages:
+  - linters
+
+image: ubuntu:18.04
+
+lint_yml:
+  stage: linters
+  image: sdesbure/yamllint
+  script:
+    - yamllint ./
