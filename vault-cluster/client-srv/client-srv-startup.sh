@@ -10,8 +10,8 @@ do
     echo "Consul did not start in $COUNTDOWN sec"
     exit 1
   fi
-  nc -zv 127.0.0.1 8500
-  if [ $? -ne 0 ]; then
+
+  if nc -zv 127.0.0.1 8500; then
     echo "sleeping 1 sec"
     sleep 1
     COUNTER=$((COUNTER+1))
