@@ -9,3 +9,9 @@ lint_yml:
   image: sdesbure/yamllint
   script:
     - yamllint ./
+
+lint_shell:
+  stage: linters
+  image: koalaman/shellcheck-alpine:v0.5.0
+  script:
+    - find ./ -name '*.sh' | xargs shellcheck
