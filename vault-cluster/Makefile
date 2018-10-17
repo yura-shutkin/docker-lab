@@ -36,6 +36,15 @@ consul-restore: ## Restore consul snapshot
 vault-unseal: ## Unseal vault
 	scripts/unseal_vault.sh
 
+.PHONY: mount-tmpfs
+mount-tmpds: ## Mount tmpfs for consul with 512M size
+	test -d data || mkdir data
+	sudo mount -t tmpfs -o size=512M tmpfs data
+
+.PHONY: unmount-tmpfs
+unmount-tmpds: ## Unmount tmpfs for consul with 512M size
+	sudo umount data
+
 .PHONY: bootstrap
 bootstrap: ## Launch project and unseal after kv restore
 	make startup
