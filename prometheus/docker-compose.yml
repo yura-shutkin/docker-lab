@@ -1,0 +1,42 @@
+---
+version: '2.1'
+services:
+  prometheus-server-1:
+    container_name: prometheus-server-1
+    image: prom/prometheus:v2.4.3
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-file: "2"
+        max-size: "50M"
+    networks:
+      default:
+        aliases:
+          - prometheus-server-1
+        ipv4_address: 192.168.3.250
+    volumes:
+      - "./configs/prometheus.yml:/etc/prometheus/prometheus.yml"
+
+  grafana-1:
+    container_name: grafana-1
+    image: grafana/grafana:5.3.0
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-file: "2"
+        max-size: "50M"
+    networks:
+      default:
+        aliases:
+          - grafana-1
+        ipv4_address: 192.168.3.251
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.3.248/29

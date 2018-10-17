@@ -1,0 +1,24 @@
+---
+global:
+  scrape_interval: 15s
+  evaluation_interval: 30s
+
+scrape_configs:
+  - job_name: prometheus
+
+    honor_labels: true
+
+    static_configs:
+      - targets: ['localhost:9090', 'localhost:9191']
+        labels:
+          service: prometheus-server
+          env: dev
+
+  - job_name: vault_exporters
+    metrics_path: /
+    static_configs:
+      - targets:
+          - 192.168.3.249:8000
+        labels:
+          service: vault-exporter
+          env: dev
