@@ -157,7 +157,7 @@ services:
           - web-bln-1
         ipv4_address: 192.168.4.5
     volumes:
-      - "./configs/nginx/conf.d:/etc/nginx/conf.d:ro"
+      - "./configs/nginx/conf.d:/etc/nginx/conf.d:rw"
       - "./configs/nginx/certs:/etc/nginx/certs:ro"
       - "./configs/nginx/includes.d:/etc/nginx/includes.d:ro"
 
@@ -167,4 +167,4 @@ networks:
     ipam:
       driver: default
       config:
-      - subnet: 192.168.4.0/26
+        - subnet: 192.168.4.0/26
