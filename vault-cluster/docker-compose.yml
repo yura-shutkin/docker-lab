@@ -1,8 +1,8 @@
-version: '3.2'
+version: '2.1'
 services:
   consul-node-1:
     container_name: consul-cluster-node-1
-    image: consul:1.2.3
+    image: consul:1.3.0
     restart: always
     logging:
       driver: journald
@@ -21,7 +21,7 @@ services:
   
   consul-node-2:
     container_name: consul-cluster-node-2
-    image: consul:1.2.3
+    image: consul:1.3.0
     restart: always
     logging:
       driver: journald
@@ -39,7 +39,7 @@ services:
     
   consul-node-3:
     container_name: consul-cluster-node-3
-    image: consul:1.2.3
+    image: consul:1.3.0
     restart: always
     logging:
       driver: journald
@@ -57,7 +57,7 @@ services:
 
   consul-node-4:
     container_name: consul-cluster-node-4
-    image: consul:1.2.3
+    image: consul:1.3.0
     restart: always
     logging:
       driver: journald
@@ -75,7 +75,7 @@ services:
 
   consul-node-5:
     container_name: consul-cluster-node-5
-    image: consul:1.2.3
+    image: consul:1.3.0
     restart: always
     logging:
       driver: journald
@@ -95,7 +95,7 @@ services:
     build:
       context: ./client-srv
       args:
-        CONSUL_VERSION: 1.2.3
+        CONSUL_VERSION: 1.3.0
         VAULT_VERSION: 0.11.3
     image: vault-consul-client:node-1
     container_name: vault-client-1
@@ -114,7 +114,7 @@ services:
     build:
       context: ./client-srv
       args:
-        CONSUL_VERSION: 1.2.3
+        CONSUL_VERSION: 1.3.0
         VAULT_VERSION: 0.11.3
     image: vault-consul-client:node-2
     container_name: vault-client-2
@@ -133,7 +133,7 @@ services:
     build:
       context: ./client-srv
       args:
-        CONSUL_VERSION: 1.2.3
+        CONSUL_VERSION: 1.3.0
         VAULT_VERSION: 0.11.3
     image: vault-consul-client:node-3
     container_name: vault-client-3
