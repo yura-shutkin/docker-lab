@@ -1,3 +1,4 @@
+---
 version: '2.1'
 services:
   consul-node-1:
@@ -18,7 +19,7 @@ services:
       - "./data/consul-cluster-node-1:/consul/data:rw"
       - "./consul.snap:/consul.snap:ro"
     command: ["consul", "agent", "-config-dir", "/consul/config/"]
-  
+
   consul-node-2:
     container_name: consul-cluster-node-2
     image: consul:1.3.0
@@ -36,7 +37,7 @@ services:
       - "./configs/consul-server/consul-cluster-node-2.json:/consul/config/server.json:ro"
       - "./data/consul-cluster-node-2:/consul/data:rw"
     command: ["consul", "agent", "-config-dir", "/consul/config/"]
-    
+
   consul-node-3:
     container_name: consul-cluster-node-3
     image: consul:1.3.0

@@ -1,3 +1,4 @@
+---
 version: '2.1'
 services:
   redis-node-1:
@@ -13,7 +14,7 @@ services:
           - redis-node-1
         ipv4_address: 192.168.6.1
     volumes:
-      - ~/develop/common/docker-lab/redis-cluster/configs/first-service-master.conf:/usr/local/etc/redis/redis.conf:rw
+      - "~/develop/common/docker-lab/redis-cluster/configs/first-service-master.conf:/usr/local/etc/redis/redis.conf:rw"
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
 
   redis-node-2:
@@ -29,7 +30,7 @@ services:
           - redis-node-2
         ipv4_address: 192.168.6.2
     volumes:
-      - ~/develop/common/docker-lab/redis-cluster/configs/first-service-slave.conf:/usr/local/etc/redis/redis.conf:rw
+      - "~/develop/common/docker-lab/redis-cluster/configs/first-service-master.conf:/usr/local/etc/redis/redis.conf:rw"
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
 
   redis-node-3:
@@ -45,7 +46,7 @@ services:
           - redis-node-3
         ipv4_address: 192.168.6.3
     volumes:
-      - ~/develop/common/docker-lab/redis-cluster/configs/first-service-slave.conf:/usr/local/etc/redis/redis.conf:rw
+      - "~/develop/common/docker-lab/redis-cluster/configs/first-service-master.conf:/usr/local/etc/redis/redis.conf:rw"
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
 
   redis-sentinel-1:
@@ -63,7 +64,7 @@ services:
     sysctls:
       net.core.somaxconn: 511
     volumes:
-      - ~/develop/common/docker-lab/redis-cluster/configs/sentinel-1.conf:/usr/local/etc/redis/sentinel.conf:rw
+      - "~/develop/common/docker-lab/redis-cluster/configs/sentinel-1.conf:/usr/local/etc/redis/sentinel.conf:rw"
     command: ["redis-sentinel", "/usr/local/etc/redis/sentinel.conf"]
 
   redis-sentinel-2:
@@ -81,7 +82,7 @@ services:
     sysctls:
       net.core.somaxconn: 511
     volumes:
-      - ~/develop/common/docker-lab/redis-cluster/configs/sentinel-2.conf:/usr/local/etc/redis/sentinel.conf:rw
+      - "~/develop/common/docker-lab/redis-cluster/configs/sentinel-2.conf:/usr/local/etc/redis/sentinel.conf:rw"
     command: ["redis-sentinel", "/usr/local/etc/redis/sentinel.conf"]
 
   redis-sentinel-3:
@@ -99,7 +100,7 @@ services:
     sysctls:
       net.core.somaxconn: 511
     volumes:
-      - ~/develop/common/docker-lab/redis-cluster/configs/sentinel-3.conf:/usr/local/etc/redis/sentinel.conf:rw
+      - "~/develop/common/docker-lab/redis-cluster/configs/sentinel-3.conf:/usr/local/etc/redis/sentinel.conf:rw"
     command: ["redis-sentinel", "/usr/local/etc/redis/sentinel.conf"]
 
   redis-cli:
@@ -122,5 +123,5 @@ networks:
     ipam:
       driver: default
       config:
-      - subnet: 192.168.6.0/28
-        gateway: 192.168.6.14
+        - subnet: 192.168.6.0/28
+          gateway: 192.168.6.14

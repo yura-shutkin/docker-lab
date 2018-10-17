@@ -1,16 +1,14 @@
-version: '2'
+---
+version: '2.1'
 services:
   vault-simple:
-    image: vault:0.10.3
+    image: vault:0.11.2
     container_name: dev-vault
     environment:
       VAULT_DEV_ROOT_TOKEN_ID: b4d31592-8e6f-583e-2def-0e0f962da3e9
       VAULT_LOG_LEVEL: debug
     cap_add:
       - IPC_LOCK
-    dns:
-      - 10.216.40.4
-      - 10.216.42.5
     logging:
       driver: json-file
       options:
@@ -22,5 +20,4 @@ services:
       env: dev
       service: vault
       clustered: 'false'
-    ports:
-      - "127.0.0.1:18200:8200"
+    network_mode: host
