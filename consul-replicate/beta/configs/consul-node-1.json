@@ -1,0 +1,29 @@
+{
+    "acl_datacenter": "Beta",
+    "acl_default_policy": "deny",
+    "acl_down_policy": "deny",
+    "acl_token": "1c83fb9d-4410-5925-f338-78bec763b941",
+    "acl_master_token": "1c83fb9d-4410-5925-f338-78bec763b941",
+    "datacenter": "Beta",
+    "data_dir": "/consul/data",
+    "encrypt": "SUyymEPna7XA69Kz0yga3A==",
+    "log_level": "INFO",
+    "enable_syslog": false,
+    "enable_debug": false,
+    "node_name": "b-node-1",
+    "server": true,
+    "ui": true,
+    "ports": {
+        "http": 8500
+    },
+    "addresses": {
+        "http": "0.0.0.0"
+    },
+    "bind_addr": "192.168.4.69",
+    "bootstrap_expect": 2,
+    "leave_on_terminate": true,
+    "skip_leave_on_interrupt": true,
+    "rejoin_after_leave": true,
+    "retry_join": ["b-node-1", "b-node-2", "b-node-3"],
+    "retry_join_wan": ["a-node-1", "a-node-2", "a-node-3"]
+}

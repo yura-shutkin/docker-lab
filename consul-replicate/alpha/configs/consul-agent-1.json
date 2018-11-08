@@ -1,0 +1,28 @@
+{
+    "acl_token": "a977b67f-c339-8f9c-4925-ff5329bbc772",
+    "acl_master_token": "b339711c-ce89-b2ca-4fd7-02492e2f5d0f",
+    "bind_addr": "192.168.4.72",
+    "datacenter": "Alpha",
+    "data_dir": "/consul/data",
+    "encrypt": "ltSuNxdFRZxtp5SuT5XtzA==",
+    "log_level": "INFO",
+    "enable_syslog": false,
+    "enable_debug": false,
+    "node_name": "a-agent-1",
+    "server": false,
+    "ui": true,
+    "ports": {
+        "http": 8500
+    },
+    "addresses": {
+        "http": "0.0.0.0"
+    },
+    "rejoin_after_leave": true,
+    "retry_join": ["a-node-1", "a-node-2", "a-node-3"],
+    "gossip_lan": {
+        "gossip_nodes": 3,
+        "gossip_interval": "400ms",
+        "probe_interval": "1s",
+        "probe_timeout": "500ms"
+    }
+}

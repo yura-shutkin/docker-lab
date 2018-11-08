@@ -1,0 +1,29 @@
+{
+    "acl_datacenter": "Alpha",
+    "acl_default_policy": "deny",
+    "acl_down_policy": "deny",
+    "acl_token": "b339711c-ce89-b2ca-4fd7-02492e2f5d0f",
+    "acl_master_token": "b339711c-ce89-b2ca-4fd7-02492e2f5d0f",
+    "datacenter": "Alpha",
+    "data_dir": "/consul/data",
+    "encrypt": "ltSuNxdFRZxtp5SuT5XtzA==",
+    "log_level": "INFO",
+    "enable_syslog": false,
+    "enable_debug": false,
+    "node_name": "a-node-1",
+    "server": true,
+    "ui": true,
+    "ports": {
+        "http": 8500
+    },
+    "addresses": {
+        "http": "0.0.0.0"
+    },
+    "bind_addr": "192.168.4.66",
+    "bootstrap_expect": 2,
+    "leave_on_terminate": true,
+    "skip_leave_on_interrupt": true,
+    "rejoin_after_leave": true,
+    "retry_join": ["a-node-1", "a-node-2", "a-node-3"],
+    "retry_join_wan": ["b-node-1", "b-node-2", "b-node-3"]
+}
