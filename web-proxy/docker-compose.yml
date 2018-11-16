@@ -1,0 +1,26 @@
+---
+version: '2.3'
+services:
+  web-bln-1:
+    image: nginx:1.14.0
+    container_name: web-bln-1
+    networks:
+      vaultcluster_default:
+        aliases:
+          - web-bln-1
+        ipv4_address: 192.168.4.5
+      prometheus_default:
+        aliases:
+          - web-bln-1
+        ipv4_address: 192.168.3.252
+    volumes:
+      - "./configs/nginx/conf.d:/etc/nginx/conf.d:ro"
+      - "./configs/nginx/certs:/etc/nginx/certs:ro"
+      - "./configs/nginx/includes.d:/etc/nginx/includes.d:ro"
+
+networks:
+  prometheus_default:
+    external: true
+
+  vaultcluster_default:
+    external: true

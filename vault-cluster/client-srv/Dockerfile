@@ -3,6 +3,7 @@ ARG VAULT_VERSION=0.11.3
 
 FROM consul:${CONSUL_VERSION} as consul-image
 
+
 FROM vault:${VAULT_VERSION}
 
 COPY client-srv-startup.sh /startup.sh
