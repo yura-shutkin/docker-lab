@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VAULT_SERVERS="vault-node-1.local vault-node-2.local vault-node-3.local"
+VAULT_SERVERS="node1.vault.local node2.vault.local node3.vault.local"
 VAULT_PORT="443"
 VAULT_KEY=$(cat ./vault-key)
 
