@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-VAULT_SERVERS="node1.vault.local node2.vault.local node3.vault.local"
+VAULT_SERVERS="vault-client-1 vault-client-2 vault-client-3"
 VAULT_PORT="443"
 VAULT_KEY=$(cat ./vault-key)
 
 for vault_srv in $VAULT_SERVERS; do
-  curl -X PUT --data '{ "key": "'"$VAULT_KEY"'" }' --connect-timeout 2 -k https://"$vault_srv":"$VAULT_PORT"/v1/sys/unseal
+  docker exec -ti $vault_srv vault operator unseal -address=http://127.0.0.1:8200 "$VAULT_KEY"
 done
