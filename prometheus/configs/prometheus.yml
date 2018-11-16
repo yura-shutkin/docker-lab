@@ -9,16 +9,50 @@ scrape_configs:
     honor_labels: true
 
     static_configs:
-      - targets: ['localhost:9090', 'localhost:9191']
+      - targets:
+          - localhost:9090
         labels:
           service: prometheus-server
           env: dev
+          instance: prometheus-server
 
   - job_name: vault_exporters
     metrics_path: /
     static_configs:
       - targets:
-          - 192.168.3.249:8000
+          - 192.168.4.6:8000
         labels:
           service: vault-exporter
           env: dev
+          instance: vault-client-1
+
+      - targets:
+          - 192.168.4.7:8000
+        labels:
+          service: vault-exporter
+          env: dev
+          instance: vault-client-2
+
+      - targets:
+          - 192.168.4.8:8000
+        labels:
+          service: vault-exporter
+          env: dev
+          instance: vault-client-3
+
+      - targets:
+          - 192.168.4.1:8000
+        labels:
+          service: vault-exporter
+          env: dev
+          instance: vault-client-host
+
+  - job_name: vault_statsd
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - 192.168.4.11:9102
+          - 172.28.128.3:9102
+        labels:
+          service: vault_statsd
+          end: dev

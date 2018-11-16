@@ -1,5 +1,5 @@
 ---
-version: '2.1'
+version: '2.3'
 services:
   prometheus-server-1:
     container_name: prometheus-server-1
@@ -15,6 +15,8 @@ services:
         aliases:
           - prometheus-server-1
         ipv4_address: 192.168.3.250
+      vaultcluster_default:
+        ipv4_address: 192.168.4.12
     volumes:
       - "./configs/prometheus.yml:/etc/prometheus/prometheus.yml"
 
@@ -32,6 +34,16 @@ services:
         aliases:
           - grafana-1
         ipv4_address: 192.168.3.251
+    volumes:
+      - grafana_1_data:/var/lib/grafana
+
+volumes:
+  grafana_1_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/data/grafana_1_data
 
 networks:
   default:
@@ -40,3 +52,6 @@ networks:
       driver: default
       config:
         - subnet: 192.168.3.248/29
+
+  vaultcluster_default:
+    external: true
