@@ -11,7 +11,7 @@ This project was started as playground for launching light weight infra, testing
 
 ## Current projects:
 
-* [Consul-replicate](/consul-replicate)
+* [consul-replicate](/consul-replicate)
   
   Example how to replicate data between consul data centers
 
@@ -19,7 +19,7 @@ This project was started as playground for launching light weight infra, testing
 
   Image for cleaning from unused containers and images
 
-* [elasticsearch-cluster]
+* [elasticsearch-cluster](/elasticsearch-cluster)
 
   Infra for log accumulation and processing
 
@@ -35,7 +35,7 @@ This project was started as playground for launching light weight infra, testing
 
   Just simple vault instance. Require no config for launching.
 
-* [vault-cluste](/vault-cluster)
+* [vault-cluster](/vault-cluster)
 
   Consul cluster + prometheus statsd exporter + vault cluster
 
