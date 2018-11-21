@@ -17,6 +17,7 @@ services:
       - "./configs/nginx/conf.d:/etc/nginx/conf.d:ro"
       - "./configs/nginx/certs:/etc/nginx/certs:ro"
       - "./configs/nginx/includes.d:/etc/nginx/includes.d:ro"
+      - "./configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
 
 networks:
   prometheus_default:
