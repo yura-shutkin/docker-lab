@@ -1,0 +1,49 @@
+---
+version: '2.3'
+services:
+  mongo:
+    image: mongo:3
+    restart: on-failure
+    logging:
+      driver: json-file
+      options:
+        max-file: "2"
+        max-size: "50M"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+    restart: on-failure
+    logging:
+      driver: json-file
+      options:
+        max-file: "2"
+        max-size: "50M"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 1g
+    environment:
+      - "http.host=0.0.0.0"
+      - "xpack.security.enabled=false"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+
+  graylog:
+    image: graylog/graylog:2.4.6-1
+    restart: on-failure
+    logging:
+      driver: json-file
+      options:
+        max-file: "2"
+        max-size: "50M"
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "0.0.0.0:12201:12201"
+      - "127.0.0.1:514:514"
+    environment:
+      - "GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/"
+      - "GRAYLOG_PASSWORD_SECRET=Ohphe5nej7in2Tai7OT8"
+      - "GRAYLOG_ROOT_PASSWORD_SHA2=f2b2b3bb10f7af796bd193fd9cb19dce050974e572cda7b8170046aa176448ca"
+    links:
+      - mongo
+      - elasticsearch
