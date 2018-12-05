@@ -23,6 +23,8 @@ This project can help you launch vault HA playground with consul backend
 
 ## Web proxy
 
+Moved to [web-proxy](../web-proxy)
+
 To access via web proxy add into your /etc/hosts
 
     192.168.4.5     consul.local vault.local
