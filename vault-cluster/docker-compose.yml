@@ -1,5 +1,5 @@
 ---
-version: '2.2'
+version: '2.3'
 services:
   consul-node-1:
     container_name: consul-cluster-node-1
@@ -102,7 +102,7 @@ services:
       context: ./client-srv
       args:
         CONSUL_VERSION: 1.3.0
-        VAULT_VERSION: 1.0.0
+        VAULT_VERSION: 1.0.1
         STATSD_EXPORTER_VERSION: 0.8.0
       network: vaultcluster_default
     image: vault-consul-client:node-1
@@ -122,13 +122,15 @@ services:
     volumes:
       - "./configs/consul-client/consul-agent-node-1.json:/consul/config/server.json:ro"
       - "./configs/consul-client/vault-config-node-1.hcl:/vault/config/config.hcl:ro"
+    volumes_from:
+      - vault-rsyslog
 
   vault-client-2:
     build:
       context: ./client-srv
       args:
         CONSUL_VERSION: 1.3.0
-        VAULT_VERSION: 1.0.0
+        VAULT_VERSION: 1.0.1
         STATSD_EXPORTER_VERSION: 0.8.0
       network: vaultcluster_default
     image: vault-consul-client:node-2
@@ -148,13 +150,15 @@ services:
     volumes:
       - "./configs/consul-client/consul-agent-node-2.json:/consul/config/server.json:ro"
       - "./configs/consul-client/vault-config-node-2.hcl:/vault/config/config.hcl:ro"
+    volumes_from:
+      - vault-rsyslog
 
   vault-client-3:
     build:
       context: ./client-srv
       args:
         CONSUL_VERSION: 1.3.0
-        VAULT_VERSION: 1.0.0
+        VAULT_VERSION: 1.0.1
         STATSD_EXPORTER_VERSION: 0.8.0
       network: vaultcluster_default
     image: vault-consul-client:node-3
@@ -174,7 +178,24 @@ services:
     volumes:
       - "./configs/consul-client/consul-agent-node-3.json:/consul/config/server.json:ro"
       - "./configs/consul-client/vault-config-node-3.hcl:/vault/config/config.hcl:ro"
+    volumes_from:
+      - vault-rsyslog
 
+  vault-rsyslog:
+    image: jumanjiman/rsyslog:8.34.0-r0-20180708T0208-git-cb867ef
+    container_name: vault-rsyslog
+    logging:
+      driver: json-file
+      options:
+        max-file: "2"
+        max-size: "50M"
+    networks:
+      default:
+        aliases:
+          - vault-rsyslog
+        ipv4_address: 192.168.4.13
+    volumes:
+      - "rsyslog-volume:/run/rsyslog/dev:rw"
 
   statsd-exporter:
     build:
@@ -195,6 +216,9 @@ services:
         aliases:
           - statsd-exporter
         ipv4_address: 192.168.4.11
+
+volumes:
+  rsyslog-volume:
 
 networks:
   default:
