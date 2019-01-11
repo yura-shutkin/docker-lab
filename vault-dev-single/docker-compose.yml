@@ -2,10 +2,10 @@
 version: '2.1'
 services:
   vault-simple:
-    image: vault:0.11.2
+    image: vault:1.0.1
     container_name: dev-vault
     environment:
-      VAULT_DEV_ROOT_TOKEN_ID: b4d31592-8e6f-583e-2def-0e0f962da3e9
+      VAULT_DEV_ROOT_TOKEN_ID: 12345
       VAULT_LOG_LEVEL: debug
     cap_add:
       - IPC_LOCK
