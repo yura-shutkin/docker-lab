@@ -36,6 +36,10 @@ consul-restore: ## Restore consul snapshot
 vault-unseal: ## Unseal vault
 	scripts/unseal_vault.sh
 
+.PHONY: vault-create-symlink-syslog
+vault-create-symlink-syslog: ## Create symlink for syslog usage
+	scripts/create_symlink_syslog.sh
+
 .PHONY: mount-tmpfs
 mount-tmpds: ## Mount tmpfs for consul with 512M size
 	test -d data || mkdir data
