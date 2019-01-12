@@ -1,0 +1,85 @@
+---
+version: '2.3'
+services:
+  vault-pgsql-srv:
+    image: vault:1.0.1
+    container_name: vault-pgsql-srv
+    cap_add:
+      - IPC_LOCK
+    logging:
+      driver: json-file
+      options:
+        labels: env,service,clustered
+        env: dev
+        max-size: "10M"
+        max-file: "2"
+    labels:
+      env: dev
+      service: vault-pgsql-srv
+      clustered: 'false'
+    networks:
+      default:
+        aliases:
+          - vault-pgsql-srv
+        ipv4_address: 192.168.4.84
+    depends_on:
+      - vault-pgsql-db
+    volumes:
+      - vault_pgsql_conf:/vault/config:rw
+    command: ["vault", "server", "--config=/vault/config/config.hcl"]
+
+  vault-pgsql-db:
+    image: postgres:11.1-alpine
+    container_name: vault-pgsql-db
+    environment:
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_USER: vault
+      POSTGRES_DB: vault_db
+    logging:
+      driver: json-file
+      options:
+        labels: env,service,clustered
+        env: dev
+        max-size: "10M"
+        max-file: "2"
+    labels:
+      env: dev
+      service: vault-pgsql-db
+      clustered: 'false'
+    volumes:
+      - vault_pgsql_data:/var/lib/postgresql/data:rw
+      - ./sql-scripts:/docker-entrypoint-initdb.d:ro
+    networks:
+      default:
+        aliases:
+          - vault-srv-db
+        ipv4_address: 192.168.4.82
+    healthcheck:
+      test: ["CMD", "nc", "-vzw 2", "192.168.4.82", "5432"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  vault_pgsql_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/data/pgsql
+
+  vault_pgsql_conf:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/configs
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.4.80/29
