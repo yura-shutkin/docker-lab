@@ -1,17 +1,35 @@
 ---
+services:
+  - name: vault:1.1.0
+    alias: vault-dev
+
+variables:
+  VAULT_DEV_ROOT_TOKEN_ID: 12345
+  VAULT_TOKEN: 12345
+  VAULT_ADDR: http://vault-dev:8200
+
 stages:
-  - linters
+  - lint
+  - check
 
 image: ubuntu:18.04
 
 lint_yml:
-  stage: linters
+  stage: lint
   image: sdesbure/yamllint
   script:
     - yamllint ./
 
 lint_shell:
-  stage: linters
+  stage: lint
   image: koalaman/shellcheck-alpine:v0.5.0
   script:
     - find ./ -name '*.sh' | xargs shellcheck
+
+check_vault:
+  stage: check
+  image: alpine:3.9
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - curl -X LIST -H "X-Vault-Token: $(echo $VAULT_TOKEN)" "$VAULT_ADDR"/sys/mounts
