@@ -32,4 +32,4 @@ check_vault:
   before_script:
     - apk add --no-cache curl
   script:
-    - curl -X LIST -H "X-Vault-Token: $(echo $VAULT_TOKEN)" "$VAULT_ADDR"/sys/mounts
+    - "curl -X LIST -H 'X-Vault-Token: $(echo $VAULT_TOKEN)' $VAULT_ADDR/sys/mounts"
