@@ -1,0 +1,10 @@
+---
+# http://yamllint.readthedocs.io/en/latest/disable_with_comments.html
+# http://yamllint.readthedocs.io/en/latest/configuration.html?highlight=warning#default-configuration
+extends: default
+
+rules:
+  line-length: disable
+  comments:
+    require-starting-space: false
+    min-spaces-from-content: 1

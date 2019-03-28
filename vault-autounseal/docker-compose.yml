@@ -1,3 +1,4 @@
+---
 version: '2.3'
 # Comon vault properties
 x-vault-proto: &vault-instance
