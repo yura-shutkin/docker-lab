@@ -1,0 +1,92 @@
+version: '2.3'
+# Comon vault properties
+x-vault-proto: &vault-instance
+  image: vault:1.1.0
+  restart: always
+  cap_add:
+    - IPC_LOCK
+  command: vault server -config /vault/config/config.hcl
+
+# Cluster specific properties
+x-vault-cluster-proto: &vault-cluster-instance
+  depends_on:
+    vault_standalone:
+      condition: service_healthy
+
+services:
+  vault_first:
+    <<: *vault-instance
+    <<: *vault-cluster-instance
+    volumes:
+      - "./config/first.hcl:/vault/config/config.hcl:ro"
+    networks:
+      vault_unseal:
+        ipv4_address: 192.168.10.3
+
+  vault_second:
+    <<: *vault-instance
+    <<: *vault-cluster-instance
+    volumes:
+      - "./config/second.hcl:/vault/config/config.hcl:ro"
+    networks:
+      vault_unseal:
+        ipv4_address: 192.168.10.4
+
+  vault_third:
+    <<: *vault-instance
+    <<: *vault-cluster-instance
+    volumes:
+      - "./config/third.hcl:/vault/config/config.hcl:ro"
+    networks:
+      vault_unseal:
+        ipv4_address: 192.168.10.5
+
+  vault_standalone:
+    <<: *vault-instance
+    volumes:
+      - "./config/standalone.hcl:/vault/config/config.hcl:ro"
+    networks:
+      vault_unseal:
+        ipv4_address: 192.168.10.6
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://192.168.10.6:8200/v1/sys/health"]
+      interval: 1s
+      timeout: 1s
+      retries: 60
+      start_period: 5s
+    depends_on:
+      consul_server:
+        condition: service_healthy
+
+  consul_server:
+    image: consul:1.4.4
+    restart: always
+    volumes:
+      - "./config/consul_server.json:/consul/config/consul_server.json:ro"
+      - "consul_server:/consul/data:rw"
+    networks:
+      vault_unseal:
+        ipv4_address: 192.168.10.2
+    command: consul agent -config-dir /consul/config/
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://192.168.10.2:8500/v1/status/leader"]
+      interval: 1s
+      timeout: 1s
+      retries: 60
+      start_period: 5s
+
+volumes:
+  consul_server:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/data/consul_server
+
+networks:
+  vault_unseal:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.10.0/29

@@ -1,0 +1,15 @@
+vault_instances:
+  vault_cluster:
+    root_tokens:
+      - s.Hjyngx4gXcGtcBBi6WfhYbdx
+    unseal_keys:
+      - XKTAud0hZOMGUEYJv8zcrczIzm43UKxvjqS8ASJVwsw=
+  vault_standalone:
+    root_tokens:
+      - s.5ZnRqVqDZ5Ck7ygHXK978v5k
+    unseal_keys:
+      - n5+hVYdXQM7dsCdtEmOib3q8nN5NQ7XqTyO9HkHvgbhR
+      - Bh0LbW/ILZ3id/QGUQcnJbj+byaIRjKAqFukOnUrwbFL
+      - aZtdZEPLL5onU/nxIoINVOE8LD9I0DOILkQfN6xlNYOB
+      - VZbBNNGmXXEu1chYEhrX4BzbN99WEqYlMrMJxGm6IKxv
+      - D88G1SKKcWrVAUnWmN3bWwnLR7FhAS9srK6sC++s6EN/
