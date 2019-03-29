@@ -1,15 +1,46 @@
 ---
 version: '2.3'
+
+x-logging-json: &logging-json
+  logging:
+    driver: json-file
+    options:
+      max-file: "2"
+      max-size: "50M"
+
+x-consul-proto: &consul-proto
+  image: consul:1.3.0
+  command: ["consul", "agent", "-config-dir", "/consul/config/"]
+  restart: always
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://0.0.0.0:8500/v1/status/leader"]
+    interval: 1s
+    timeout: 1s
+    retries: 60
+    start_period: 5s
+
+x-vault-proto: &vault-proto
+  build:
+    context: ./client-srv
+    args:
+      CONSUL_VERSION: 1.3.0
+      VAULT_VERSION: 1.1.0
+      STATSD_EXPORTER_VERSION: 0.8.0
+    network: vaultcluster_default
+  image: vault-consul-client:unite
+  volumes_from:
+    - vault-rsyslog
+  cap_add:
+    - IPC_LOCK
+  depends_on:
+    vault-rsyslog:
+      condition: service_started
+
 services:
   consul-node-1:
+    <<: *consul-proto
+    <<: *logging-json
     container_name: consul-cluster-node-1
-    image: consul:1.3.0
-    restart: always
-    logging:
-      driver: json-file
-      options:
-        max-file: "2"
-        max-size: "50M"
     networks:
       default:
         aliases:
@@ -19,17 +50,11 @@ services:
       - "./configs/consul-server/consul-cluster-node-1.json:/consul/config/server.json:ro"
       - "./data/consul-cluster-node-1:/consul/data:rw"
       - "./consul.snap:/consul.snap:ro"
-    command: ["consul", "agent", "-config-dir", "/consul/config/"]
 
   consul-node-2:
+    <<: *consul-proto
+    <<: *logging-json
     container_name: consul-cluster-node-2
-    image: consul:1.3.0
-    restart: always
-    logging:
-      driver: json-file
-      options:
-        max-file: "2"
-        max-size: "50M"
     networks:
       default:
         aliases:
@@ -38,17 +63,11 @@ services:
     volumes:
       - "./configs/consul-server/consul-cluster-node-2.json:/consul/config/server.json:ro"
       - "./data/consul-cluster-node-2:/consul/data:rw"
-    command: ["consul", "agent", "-config-dir", "/consul/config/"]
 
   consul-node-3:
+    <<: *consul-proto
+    <<: *logging-json
     container_name: consul-cluster-node-3
-    image: consul:1.3.0
-    restart: always
-    logging:
-      driver: json-file
-      options:
-        max-file: "2"
-        max-size: "50M"
     networks:
       default:
         aliases:
@@ -57,17 +76,11 @@ services:
     volumes:
       - "./configs/consul-server/consul-cluster-node-3.json:/consul/config/server.json:ro"
       - "./data/consul-cluster-node-3:/consul/data:rw"
-    command: ["consul", "agent", "-config-dir", "/consul/config/"]
 
   consul-node-4:
+    <<: *consul-proto
+    <<: *logging-json
     container_name: consul-cluster-node-4
-    image: consul:1.3.0
-    restart: always
-    logging:
-      driver: json-file
-      options:
-        max-file: "2"
-        max-size: "50M"
     networks:
       default:
         aliases:
@@ -76,17 +89,11 @@ services:
     volumes:
       - "./configs/consul-server/consul-cluster-node-4.json:/consul/config/server.json:ro"
       - "./data/consul-cluster-node-4:/consul/data:rw"
-    command: ["consul", "agent", "-config-dir", "/consul/config/"]
 
   consul-node-5:
+    <<: *consul-proto
+    <<: *logging-json
     container_name: consul-cluster-node-5
-    image: consul:1.3.0
-    restart: always
-    logging:
-      driver: json-file
-      options:
-        max-file: "2"
-        max-size: "50M"
     networks:
       default:
         aliases:
@@ -95,25 +102,11 @@ services:
     volumes:
       - "./configs/consul-server/consul-cluster-node-5.json:/consul/config/server.json:ro"
       - "./data/consul-cluster-node-5:/consul/data:rw"
-    command: ["consul", "agent", "-config-dir", "/consul/config/"]
 
   vault-client-1:
-    build:
-      context: ./client-srv
-      args:
-        CONSUL_VERSION: 1.3.0
-        VAULT_VERSION: 1.0.1
-        STATSD_EXPORTER_VERSION: 0.8.0
-      network: vaultcluster_default
-    image: vault-consul-client:node-1
+    <<: *vault-proto
+    <<: *logging-json
     container_name: vault-client-1
-    logging:
-      driver: json-file
-      options:
-        max-file: "2"
-        max-size: "50M"
-    cap_add:
-      - IPC_LOCK
     networks:
       default:
         aliases:
@@ -122,26 +115,11 @@ services:
     volumes:
       - "./configs/consul-client/consul-agent-node-1.json:/consul/config/server.json:ro"
       - "./configs/consul-client/vault-config-node-1.hcl:/vault/config/config.hcl:ro"
-    volumes_from:
-      - vault-rsyslog
 
   vault-client-2:
-    build:
-      context: ./client-srv
-      args:
-        CONSUL_VERSION: 1.3.0
-        VAULT_VERSION: 1.0.1
-        STATSD_EXPORTER_VERSION: 0.8.0
-      network: vaultcluster_default
-    image: vault-consul-client:node-2
+    <<: *vault-proto
+    <<: *logging-json
     container_name: vault-client-2
-    logging:
-      driver: json-file
-      options:
-        max-file: "2"
-        max-size: "50M"
-    cap_add:
-      - IPC_LOCK
     networks:
       default:
         aliases:
@@ -150,26 +128,11 @@ services:
     volumes:
       - "./configs/consul-client/consul-agent-node-2.json:/consul/config/server.json:ro"
       - "./configs/consul-client/vault-config-node-2.hcl:/vault/config/config.hcl:ro"
-    volumes_from:
-      - vault-rsyslog
 
   vault-client-3:
-    build:
-      context: ./client-srv
-      args:
-        CONSUL_VERSION: 1.3.0
-        VAULT_VERSION: 1.0.1
-        STATSD_EXPORTER_VERSION: 0.8.0
-      network: vaultcluster_default
-    image: vault-consul-client:node-3
+    <<: *vault-proto
+    <<: *logging-json
     container_name: vault-client-3
-    logging:
-      driver: json-file
-      options:
-        max-file: "2"
-        max-size: "50M"
-    cap_add:
-      - IPC_LOCK
     networks:
       default:
         aliases:
@@ -178,17 +141,11 @@ services:
     volumes:
       - "./configs/consul-client/consul-agent-node-3.json:/consul/config/server.json:ro"
       - "./configs/consul-client/vault-config-node-3.hcl:/vault/config/config.hcl:ro"
-    volumes_from:
-      - vault-rsyslog
 
   vault-rsyslog:
+    <<: *logging-json
     image: jumanjiman/rsyslog:8.34.0-r0-20180708T0208-git-cb867ef
     container_name: vault-rsyslog
-    logging:
-      driver: json-file
-      options:
-        max-file: "2"
-        max-size: "50M"
     networks:
       default:
         aliases:
@@ -198,6 +155,7 @@ services:
       - "rsyslog-volume:/run/rsyslog/dev:rw"
 
   statsd-exporter:
+    <<: *logging-json
     build:
       context: ./statsd_exporter
       args:
@@ -206,11 +164,6 @@ services:
       network: vaultcluster_default
     image: statsd-exporter:0.8.0
     container_name: statsd-exporter
-    logging:
-      driver: json-file
-      options:
-        max-file: "2"
-        max-size: "50M"
     networks:
       default:
         aliases:
