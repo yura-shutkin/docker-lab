@@ -1,7 +1,8 @@
 acl = {
   enabled = true
-  default_policy = "deny"
-  enable_token_persistence = true
+  tokens = {
+    agent = "<consul-agent_agent_token>"
+  }
 }
 
 telemetry {
@@ -9,6 +10,10 @@ telemetry {
   prometheus_retention_time = "1h"
 }
 
+bind_addr = "0.0.0.0"
+retry_join = [
+  "consul-server",
+]
 node_name = "consul-agent"
 datacenter = "vault-storage-local"
 server = false
