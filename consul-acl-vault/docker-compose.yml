@@ -8,6 +8,15 @@ x-logging-json: &logging-json
       max-file: "1"
       max-size: "50M"
 
+x-consul-proto: &consul-proto
+  command: ["consul", "agent", "-config-dir", "/consul/config/"]
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://0.0.0.0:8500/v1/status/leader"]
+    interval: 30s
+    timeout: 5s
+    retries: 10
+    start_period: 5s
+
 services:
   vault:
     <<: *logging-json
@@ -24,29 +33,25 @@ services:
 
   consul-agent:
     <<: *logging-json
+    <<: *consul-proto
     image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}consul:${CONSUL_AGENT_VERSION:-1.5.3}
     volumes:
       - "./consul-agent.hcl:/consul/config/config.hcl:ro"
+      - "consul_agent:/consul/data:rw"
     depends_on:
       consul-server:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://0.0.0.0:8500/v1/status/leader"]
-      interval: 30s
-      timeout: 5s
-      retries: 10
-      start_period: 5s
 
   consul-server:
     <<: *logging-json
+    <<: *consul-proto
     image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}consul:${CONSUL_SERVER_VERSION:-1.5.3}
     ports:
       - "${CONSUL_SERVER_BOUND_ADDR}:${CONSUL_SERVER_PORT:-8500}:8500"
     volumes:
       - "./consul-server.hcl:/consul/config/config.hcl:ro"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://0.0.0.0:8500/v1/status/leader"]
-      interval: 30s
-      timeout: 5s
-      retries: 10
-      start_period: 5s
+      - "consul_server:/consul/data:rw"
+
+volumes:
+  consul_agent:
+  consul_server:

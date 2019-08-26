@@ -1,6 +1,7 @@
 agent_prefix "" {
   policy = "read"
 }
+
 agent "consul-agent" {
   policy = "write"
 }
