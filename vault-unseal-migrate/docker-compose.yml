@@ -1,0 +1,96 @@
+---
+version: '2.3'
+
+x-logging-json: &logging-json
+  logging:
+    driver: json-file
+    options:
+      max-file: "1"
+      max-size: "50M"
+
+x-consul-proto: &consul-proto
+  command: ["consul", "agent", "-config-dir", "/consul/config/"]
+
+x-vault-proto: &vault-proto
+  command: ["vault", "server", "--config=/vault/config/config.hcl"]
+
+services:
+  vault-unseal:
+    <<: *logging-json
+    <<: *vault-proto
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_UNSEAL_VERSION:-1.2.0}
+    volumes:
+      - "./configs/vault-unseal.hcl:/vault/config/config.hcl:ro"
+      - "vault-unseal:/vault/file:rw"
+    networks:
+      default:
+        ipv4_address: 172.18.1.12
+
+  vault-1:
+    <<: *logging-json
+    <<: *vault-proto
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION:-1.2.0}
+    volumes:
+      - "./configs/vault-1.hcl:/vault/config/config.hcl:ro"
+      - "/dev/log:/dev/log:rw"
+    networks:
+      default:
+        ipv4_address: 172.18.1.14
+
+  vault-2:
+    <<: *logging-json
+    <<: *vault-proto
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION:-1.2.0}
+    volumes:
+      - "./configs/vault-2.hcl:/vault/config/config.hcl:ro"
+      - "/dev/log:/dev/log:rw"
+    networks:
+      default:
+        ipv4_address: 172.18.1.13
+
+  consul-agent-1:
+    <<: *logging-json
+    <<: *consul-proto
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}consul:${CONSUL_AGENT_VERSION:-1.5.3}
+    volumes:
+      - './configs/consul-agent-1.hcl:/consul/config/config.hcl:ro'
+      - 'consul-agent-1:/consul/data:rw'
+    networks:
+      default:
+        ipv4_address: 172.18.1.5
+
+  consul-agent-2:
+    <<: *logging-json
+    <<: *consul-proto
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}consul:${CONSUL_AGENT_VERSION:-1.5.3}
+    volumes:
+      - './configs/consul-agent-2.hcl:/consul/config/config.hcl:ro'
+      - 'consul-agent-2:/consul/data:rw'
+    networks:
+      default:
+        ipv4_address: 172.18.1.6
+
+  consul-server-1:
+    <<: *logging-json
+    <<: *consul-proto
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}consul:${CONSUL_SERVER_VERSION:-1.5.3}
+    volumes:
+      - './configs/consul-server-1.hcl:/consul/config/config.hcl:ro'
+      - 'consul-server-1:/consul/data:rw'
+    networks:
+      default:
+        ipv4_address: 172.18.1.2
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.1.0/28
+
+volumes:
+  consul-agent-1:
+  consul-agent-2:
+  consul-server-1:
+  vault-unseal:
