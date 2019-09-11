@@ -1,0 +1,14 @@
+---
+# http://yamllint.readthedocs.io/en/latest/disable_with_comments.html
+# http://yamllint.readthedocs.io/en/latest/configuration.html?highlight=warning#default-configuration
+extends: default
+
+rules:
+  line-length:
+    max: 120
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+    level: warning
+  comments:
+    require-starting-space: false
+    min-spaces-from-content: 1
