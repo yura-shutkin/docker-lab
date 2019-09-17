@@ -1,0 +1,62 @@
+---
+version: '2.3'
+
+x-logging-json: &logging-json
+  logging:
+    driver: json-file
+    options:
+      max-file: "1"
+      max-size: "50M"
+
+x-consul-proto: &consul-proto
+  command: ["consul", "agent", "-config-dir", "/consul/config/"]
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://0.0.0.0:8500/v1/status/leader"]
+    interval: 30s
+    timeout: 5s
+    retries: 10
+    start_period: 5s
+
+services:
+  consul-server:
+    <<: *logging-json
+    <<: *consul-proto
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}consul:${CONSUL_SERVER_VERSION:-1.5.3}
+    volumes:
+      - "./consul-server.hcl:/consul/config/config.hcl:ro"
+
+  consul-server-standby-1:
+    <<: *logging-json
+    <<: *consul-proto
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}consul:${CONSUL_SERVER_VERSION:-1.5.3}
+    volumes:
+      - "./consul-server-standby.hcl:/consul/config/config.hcl:ro"
+
+  consul-server-standby-2:
+    <<: *logging-json
+    <<: *consul-proto
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}consul:${CONSUL_SERVER_VERSION:-1.5.3}
+    volumes:
+      - "./consul-server-standby.hcl:/consul/config/config.hcl:ro"
+
+  prometheus:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}prom/prometheus:${PROMETHEUS_SERVER_VERSION}
+    volumes:
+      - prom_conf:/etc/prometheus:ro
+
+  grafana:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}grafana/grafana:${GRAFANA_SERVER_VERSION}
+    volumes:
+      - grafana_data:/var/lib/grafana:rw
+
+volumes:
+  grafana_data:
+
+  prom_conf:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/configs/prometheus

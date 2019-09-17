@@ -1,0 +1,38 @@
+---
+global:
+  scrape_interval: 3s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+
+    honor_labels: true
+
+    static_configs:
+      - targets:
+          - localhost:9090
+        labels:
+          service: prometheus-server
+          env: local
+          instance: prometheus-server
+
+  - job_name: consul_metrics
+    metrics_path: /v1/agent/metrics
+    params:
+      format:
+        - prometheus
+    scheme: http
+    static_configs:
+      - targets:
+          - consul-server:8500
+          - consul-server-standby-1:8500
+          - consul-server-standby-2:8500
+        labels:
+          env: local
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: ^(.*):\d+$
+        target_label: instance
+        replacement: $1
+        action: replace
+    bearer_token: ccc5a4d0-30fb-e889-d56c-628506c66af2
