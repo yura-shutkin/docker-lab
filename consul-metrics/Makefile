@@ -13,7 +13,6 @@ up: ## Start project
 	@if [ ! -f .env ]; then cp .env.example .env; echo "No .env file found. New created. Please try again"; exit 1 ; fi
 	@docker-compose up -d
 	@sleep 5
-	@$(MAKE) get_ips
 
 .PHONY: down
 down: ## Stop project and cleanup with volumes
