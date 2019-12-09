@@ -1,0 +1,56 @@
+---
+version: '2.3'
+
+x-logging-json: &logging-json
+  logging:
+    driver: json-file
+    options:
+      max-file: "1"
+      max-size: "50M"
+
+x-vault-server-proto: &vault-server-proto
+  command: ["vault", "server", "--config=/vault/config/config.hcl"]
+
+x-vault-agent-proto: &vault-agent-proto
+  command: ["vault", "agent", "--config=/vault/config/config.hcl"]
+
+services:
+  vault-server:
+    <<: *logging-json
+    <<: *vault-server-proto
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION}
+    volumes:
+      - "./conf/vault-server.hcl:/vault/config/config.hcl:ro"
+    ports:
+      - "${VAULT_BOUND_ADDR}:${VAULT_PORT}:8200"
+    networks:
+      default:
+        ipv4_address: 10.100.1.2
+
+  vault-agent:
+    <<: *logging-json
+    <<: *vault-agent-proto
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION}
+    restart: unless-stopped
+    volumes:
+      - "./conf/vault-agent.hcl:/vault/config/config.hcl:ro"
+      - "vault-creds:/vault/data:rw"
+    networks:
+      default:
+        ipv4_address: 10.100.1.3
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.100.1.0/29
+
+volumes:
+  vault-creds:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/creds
