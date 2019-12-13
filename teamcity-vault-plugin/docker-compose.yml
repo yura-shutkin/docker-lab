@@ -1,0 +1,38 @@
+---
+version: '2.3'
+
+x-logging-json: &logging-json
+  logging:
+    driver: json-file
+    options:
+      max-file: "1"
+      max-size: "50M"
+
+services:
+  vault:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION}
+    ports:
+      - "${VAULT_BOUND_ADDR}:${VAULT_PORT:-8200}:8200"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_ROOT_TOKEN_ID}
+    volumes:
+      - vault_data:/vault/data:rw
+
+  teamcity-server:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}jetbrains/teamcity-server:${TEAMCITY_VERSION}
+    ports:
+      - "${TEAMCITY_BOUND_ADDR}:${TEAMCITY_PORT}:8111"
+    volumes:
+      - teamcity_server_data:/data/teamcity_server/datadir:rw
+
+  teamcity-agent:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}jetbrains/teamcity-agent:${TEAMCITY_VERSION}
+    environment:
+      SERVER_URL: http://teamcity-server:8111
+
+volumes:
+  teamcity_server_data:
+  vault_data:
