@@ -13,12 +13,14 @@ x-consul-proto: &consul-proto
 
 x-vault-proto: &vault-proto
   command: ["vault", "server", "--config=/vault/config/config.hcl"]
+  cap_add:
+    - IPC_LOCK
 
 services:
   vault-unseal:
     <<: *logging-json
     <<: *vault-proto
-    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_UNSEAL_VERSION:-1.2.0}
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_UNSEAL_VERSION:-1.3.2}
     volumes:
       - "./configs/vault-unseal.hcl:/vault/config/config.hcl:ro"
       - "vault-unseal:/vault/file:rw"
@@ -29,7 +31,7 @@ services:
   vault-1:
     <<: *logging-json
     <<: *vault-proto
-    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION:-1.2.0}
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION:-1.3.2}
     volumes:
       - "./configs/vault-1.hcl:/vault/config/config.hcl:ro"
       - "/dev/log:/dev/log:rw"
@@ -40,7 +42,7 @@ services:
   vault-2:
     <<: *logging-json
     <<: *vault-proto
-    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION:-1.2.0}
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION:-1.3.2}
     volumes:
       - "./configs/vault-2.hcl:/vault/config/config.hcl:ro"
       - "/dev/log:/dev/log:rw"
