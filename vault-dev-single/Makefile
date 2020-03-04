@@ -8,6 +8,7 @@ help: ## 	Show this help.
 .PHONY: up
 up: ## 	Launch or update project
 	@docker-compose up -d
+	@curl -s -X GET http://192.168.9.2:8200/v1/sys/init | grep false && curl -s -X PUT -d '{"secret_shares": 1, "secret_threshold": 1}' -o vault_creds.json http://192.168.9.2:8200/v1/sys/init
 	@echo "Check http://192.168.9.2:8200"
 
 .PHONY: up-attach
@@ -20,5 +21,6 @@ down: ## 	Stop project and remove containers
 
 .PHONY: cleanup
 cleanup: ## 	Stop project and remove volumes and orphans as well
-	@docker-compose down --volumes --remove-orphans
-	@sudo rm -Rfv data/* !\(".keep"\)
+	-docker-compose down --volumes --remove-orphans
+	-rm -v vault_creds.json
+	-sudo rm -Rfv data/* !\(".keep"\)

@@ -7,6 +7,14 @@ telemetry {
   prometheus_retention_time = "720h"
 }
 
+listener "tcp" {
+  telemetry {
+    unauthenticated_metrics_access = true
+  }
+  tls_disable = true
+  address = "192.168.9.2:8200"
+}
+
 log_level = "trace"
 disable_mlock = true
 ui = true

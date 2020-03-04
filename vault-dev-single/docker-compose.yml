@@ -29,8 +29,10 @@ services:
     volumes:
       - vault-dev-config:/vault/config:ro
       - vault-dev-data:/vault/file:rw
+    command: ["vault", "server", "--config=/vault/config/server.hcl"]
     networks:
       vault-dev-local:
+        ipv4_address: 192.168.9.2
 
 volumes:
   vault-dev-config:
