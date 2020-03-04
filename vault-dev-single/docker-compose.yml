@@ -1,23 +1,56 @@
 ---
-version: '2.1'
+version: '2.3'
+
+x-logging-json: &logging-json
+  logging:
+    driver: json-file
+    options:
+      max-file: "1"
+      max-size: "50M"
+
 services:
-  vault-simple:
-    image: vault:1.0.1
-    container_name: dev-vault
+  server:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION}
     environment:
-      VAULT_DEV_ROOT_TOKEN_ID: 12345
-      VAULT_LOG_LEVEL: debug
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_TOKEN}
+      VAULT_LOG_LEVEL: ${VAULT_LOG_LEVEL}
     cap_add:
       - IPC_LOCK
-    logging:
-      driver: json-file
-      options:
-        labels: env,service,clustered
-        env: dev
-        max-size: "10M"
-        max-file: "2"
+      - SETFCAP
+      - SETGID
+      - SETUID
+    cap_drop:
+      - ALL
     labels:
       env: dev
       service: vault
       clustered: 'false'
-    network_mode: host
+    volumes:
+      - vault-dev-config:/vault/config:ro
+      - vault-dev-data:/vault/file:rw
+    networks:
+      vault-dev-local:
+
+volumes:
+  vault-dev-config:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/conf
+
+  vault-dev-data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/data
+
+networks:
+  vault-dev-local:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.9.0/30
