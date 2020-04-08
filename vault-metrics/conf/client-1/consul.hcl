@@ -1,0 +1,12 @@
+bind_addr = "192.168.10.3"
+datacenter = "test-cluster"
+data_dir = "/consul/data"
+log_level = "err"
+enable_syslog = false
+enable_debug = false
+enable_script_checks = false
+node_name = "client-1"
+node_meta = {}
+server = false
+rejoin_after_leave = true
+retry_join = ["consul-1"]

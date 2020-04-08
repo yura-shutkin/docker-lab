@@ -1,0 +1,89 @@
+---
+version: '2.3'
+
+x-logging-json: &logging-json
+  logging:
+    driver: json-file
+    options:
+      max-file: "1"
+      max-size: "50M"
+
+x-client-proto: &client-proto
+  build:
+    context: ./client
+    args:
+      CONSUL_VERSION: ${CLIENT_CONSUL_VERSION}
+      VAULT_VERSION: ${VAULT_VERSION}
+    network: vault-metrics
+  image: vault-client:vault_${VAULT_VERSION}_consul-agent_${CLIENT_CONSUL_VERSION}
+  environment:
+    VAULT_LOG_LEVEL: ${VAULT_LOG_LEVEL}
+  cap_add:
+    - IPC_LOCK
+    - SETFCAP
+    - SETGID
+    - SETUID
+    - NET_BIND_SERVICE
+    - DAC_OVERRIDE
+  cap_drop:
+    - ALL
+
+services:
+  consul-1:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}consul:${SERVER_CONSUL_VERSION}
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    volumes:
+      - ./conf/consul/config.hcl:/consul/config/config.hcl:ro
+      - consul-1-data:/consul/data:rw
+    command: "consul agent -log-level=${CONSUL_LOG_LEVEL} -config-dir /consul/config/"
+    networks:
+      vault-metrics:
+        ipv4_address: 192.168.10.2
+
+  client-1:
+    <<: *logging-json
+    <<: *client-proto
+    volumes:
+      - ./conf/client-1/vault.hcl:/vault/config/config.hcl:ro
+      - ./conf/client-1/consul.hcl:/consul/config/config.hcl:ro
+      - ./certs:/certs:ro
+    networks:
+      vault-metrics:
+        ipv4_address: 192.168.10.3
+
+  prometheus:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}prom/prometheus:${PROMETHEUS_VERSION}
+    cap_drop:
+      - ALL
+    volumes:
+      - ./conf/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./certs:/certs:ro
+    networks:
+      vault-metrics:
+        ipv4_address: 192.168.10.4
+
+volumes:
+  consul-1-data:
+
+  certs:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/certs
+
+networks:
+  vault-metrics:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        # Usable range - 192.168.10.1 - 192.168.10.14
+        - subnet: 192.168.10.0/28
