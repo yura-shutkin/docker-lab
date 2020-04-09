@@ -15,6 +15,14 @@ scrape_configs:
     static_configs:
       - targets:
           - client-1:443
+          - client-2:443
+          - client-3:443
         labels:
           service: vault
           env: dev
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: ^(.*):\d+$
+        target_label: instance
+        replacement: $1
+        action: replace

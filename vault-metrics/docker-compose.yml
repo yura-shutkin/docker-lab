@@ -57,6 +57,28 @@ services:
       vault-metrics:
         ipv4_address: 192.168.10.3
 
+  client-2:
+    <<: *logging-json
+    <<: *client-proto
+    volumes:
+      - ./conf/client-2/vault.hcl:/vault/config/config.hcl:ro
+      - ./conf/client-2/consul.hcl:/consul/config/config.hcl:ro
+      - ./certs:/certs:ro
+    networks:
+      vault-metrics:
+        ipv4_address: 192.168.10.6
+
+  client-3:
+    <<: *logging-json
+    <<: *client-proto
+    volumes:
+      - ./conf/client-3/vault.hcl:/vault/config/config.hcl:ro
+      - ./conf/client-3/consul.hcl:/consul/config/config.hcl:ro
+      - ./certs:/certs:ro
+    networks:
+      vault-metrics:
+        ipv4_address: 192.168.10.7
+
   prometheus:
     <<: *logging-json
     image: ${DOCKER_REGISTRY}prom/prometheus:${PROMETHEUS_VERSION}
