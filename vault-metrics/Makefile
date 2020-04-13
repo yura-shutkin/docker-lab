@@ -40,11 +40,11 @@ down: ## 		Stop project and remove containers
 
 .PHONY: cleanup
 cleanup: ## 		Stop project and remove volumes and orphans as well
-	-docker-compose down --volumes --remove-orphans
-	-rm -v vault_creds.json
+	-@docker-compose down --volumes --remove-orphans
+	-@rm -v vault_creds.json
 
 .PHONY: unseal
 unseal: ## 		Try to unseal vault instances
-	-curl -sk -X PUT -d "{\"key\": \"$(shell cat vault_creds.json | sed -e 's/\"].*//' -e 's/.*\"//')\"}" https://192.168.10.3/v1/sys/unseal &
-	-curl -sk -X PUT -d "{\"key\": \"$(shell cat vault_creds.json | sed -e 's/\"].*//' -e 's/.*\"//')\"}" https://192.168.10.6/v1/sys/unseal &
-	-curl -sk -X PUT -d "{\"key\": \"$(shell cat vault_creds.json | sed -e 's/\"].*//' -e 's/.*\"//')\"}" https://192.168.10.7/v1/sys/unseal &
+	-@curl -sk -X PUT -d "{\"key\": \"$(shell cat vault_creds.json | sed -e 's/\"].*//' -e 's/.*\"//')\"}" https://192.168.10.3/v1/sys/unseal &
+	-@curl -sk -X PUT -d "{\"key\": \"$(shell cat vault_creds.json | sed -e 's/\"].*//' -e 's/.*\"//')\"}" https://192.168.10.6/v1/sys/unseal &
+	-@curl -sk -X PUT -d "{\"key\": \"$(shell cat vault_creds.json | sed -e 's/\"].*//' -e 's/.*\"//')\"}" https://192.168.10.7/v1/sys/unseal &
