@@ -53,3 +53,7 @@ se-root-rotate: ## 	Rotate PGSQL root creds
 .PHONY: se-create-ro-role
 se-create-ro-role: ## Create RO role
 	@curl -X POST -sk -H "X-Vault-Token: $(shell cat vault_creds.json | jq -r '.root_token')" -d @payloads/pgsql_role_ro.json ${VAULT_ADDR}/v1/database/roles/pgsql-ro
+
+.PHONY: se-gen-ro-role-creds
+se-gen-ro-role-creds: ## Generate postgresql RO role creds
+	@curl -X GET -sk -H "X-Vault-Token: $(shell cat vault_creds.json | jq -r '.root_token')" ${VAULT_ADDR}/v1/database/creds/pgsql-ro | jq
