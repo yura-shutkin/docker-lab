@@ -72,11 +72,11 @@ services:
 
 volumes:
   pgsql_data:
-    # driver: local
-    # driver_opts:
-    #   type: 'none'
-    #   o: 'bind'
-    #   device: $PWD/data/pgsql
+  #   driver: local
+  #   driver_opts:
+  #     type: 'none'
+  #     o: 'bind'
+  #     device: $PWD/data/pgsql
 
 networks:
   vault-pgsql:
