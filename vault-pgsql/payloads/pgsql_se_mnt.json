@@ -1,0 +1,9 @@
+{
+  "type": "database",
+  "description":  "My database SE",
+  "config": {
+    "default_lease_ttl": "30s",
+    "max_lease_ttl": "60s",
+    "force_no_cache": false
+  }
+}
