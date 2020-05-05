@@ -1,2 +1,3 @@
 .idea/
-vault-cluster/data/
+
+.env

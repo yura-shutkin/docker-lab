@@ -8,18 +8,28 @@ x-logging-json: &logging-json
       max-file: "1"
       max-size: "50M"
 
+x-logging-local: &logging-local
+  logging:
+    driver: local
+    options:
+      max-file: "2"
+      max-size: "50M"
+      compress: "true"
+
 services:
   server:
-    <<: *logging-json
+    <<: *logging-local
     image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION}
-    environment:
-      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_TOKEN}
-      VAULT_LOG_LEVEL: ${VAULT_LOG_LEVEL}
+    ## This is useful only if you run vault in dev mode without consistant storage
+    # environment:
+    #   VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_TOKEN}
+    #   VAULT_LOG_LEVEL: ${VAULT_LOG_LEVEL}
     cap_add:
       - IPC_LOCK
       - SETFCAP
       - SETGID
       - SETUID
+      - CHOWN
     cap_drop:
       - ALL
     labels:
@@ -27,7 +37,7 @@ services:
       service: vault
       clustered: 'false'
     volumes:
-      - vault-dev-config:/vault/config:ro
+      - $PWD/conf/server.hcl:/vault/config/server.hcl:ro
       - vault-dev-data:/vault/file:rw
     command: ["vault", "server", "--config=/vault/config/server.hcl"]
     networks:
@@ -35,13 +45,6 @@ services:
         ipv4_address: 192.168.9.2
 
 volumes:
-  vault-dev-config:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: $PWD/conf
-
   vault-dev-data:
     driver: local
     driver_opts:

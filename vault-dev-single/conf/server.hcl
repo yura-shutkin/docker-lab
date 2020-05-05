@@ -16,5 +16,6 @@ listener "tcp" {
 }
 
 log_level = "trace"
+log_format = "json"
 disable_mlock = true
 ui = true
