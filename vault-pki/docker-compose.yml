@@ -1,0 +1,78 @@
+---
+version: '2.3'
+
+x-logging-json: &logging-json
+  logging:
+    driver: json-file
+    options:
+      max-file: "1"
+      max-size: "50M"
+
+services:
+  vault:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION}
+    cap_add:
+      - IPC_LOCK
+      - SETFCAP
+      - SETGID
+      - SETUID
+    cap_drop:
+      - ALL
+    labels:
+      env: local
+      service: vault
+      clustered: "false"
+    volumes:
+      - $PWD/conf/vault/server.hcl:/vault/config/server.hcl:ro
+      - vault-dev-data:/vault/file:rw
+    command: ["vault", "server", "--config=/vault/config/server.hcl"]
+    networks:
+      vault-dev-local:
+        ipv4_address: 192.168.9.10
+
+  nginx:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}nginx:${NGINX_VERSION}
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - CHOWN
+      - SETGID
+      - SETUID
+    volumes:
+      - ./conf/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./conf/nginx/certs:/etc/nginx/certs:ro
+      - ./conf/nginx/includes.d:/etc/nginx/includes.d:ro
+      - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      vault-dev-local:
+        ipv4_address: 192.168.9.11
+
+  blog:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}ghost:${GHOST_VERSION}
+    environment:
+      url: http://blog.pki.infra
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    networks:
+      vault-dev-local:
+        ipv4_address: 192.168.9.12
+
+volumes:
+  vault-dev-data:
+
+networks:
+  vault-dev-local:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        # 192.168.9.9 - 192.168.9.14
+        - subnet: 192.168.9.10/29
