@@ -1,0 +1,12 @@
+---
+ansible_host: "{{ ansible_host_dev }}"
+ansible_ssh_pass: "{{
+  lookup(
+    'hashi_vault',
+    'secret=secret/data/dev:pass
+    auth_method=approle
+    role_id={{ role_id }}
+    secret_id={{ secret_id }}
+    url={{ vault_url }}'
+  )
+}}"
