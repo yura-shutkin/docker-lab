@@ -13,6 +13,8 @@ In this demo you can see how to grub ssh password from Vault via ansible hashi_v
 
 * Python requirements described at [requirements.txt](requirements.txt)
 
+* sshpass (at least on Ubuntu 20.04)
+
 ### How to setup environment
 
 * Start Hashicorp Vault
@@ -42,7 +44,7 @@ In this demo you can see how to grub ssh password from Vault via ansible hashi_v
   write -force auth/approle/role/ansible-helper/secret-id
   ```
 
-* Store password to [Vault](http://127.0.0.1:8200/v1/secret/data/dev) into field pass
+* Store password to [Vault](http://127.0.0.1:8200/ui/vault/secrets/secret/show/dev) into field pass
 
 * Check connection to host
 ```
