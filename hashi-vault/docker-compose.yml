@@ -1,0 +1,33 @@
+---
+version: '2.4'
+
+x-logging-json: &logging-json
+  logging:
+    driver: json-file
+    options:
+      max-file: "1"
+      max-size: "50M"
+
+services:
+  vault:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION}
+    ## This is useful only if you run vault in dev mode without consistant storage
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_TOKEN}
+      VAULT_LOG_LEVEL: ${VAULT_LOG_LEVEL}
+    cap_add:
+      - IPC_LOCK
+      - SETFCAP
+      - SETGID
+      - SETUID
+      - CHOWN
+    cap_drop:
+      - ALL
+    ports:
+      - 0.0.0.0:8200:8200
+    networks:
+      hashi_vault:
+
+networks:
+  hashi_vault:
