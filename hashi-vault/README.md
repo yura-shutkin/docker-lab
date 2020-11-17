@@ -19,6 +19,8 @@ In this demo you can see how to grub ssh password from Vault via ansible hashi_v
 
 * Start Hashicorp Vault
   * via docker
+  
+    make sure you have valid .env
     ```
     docker-compose up -d
     ```
