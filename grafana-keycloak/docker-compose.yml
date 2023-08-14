@@ -106,11 +106,11 @@ volumes:
       device: $PWD/data/pgsql
 
   grafana-data:
-      driver: local
-      driver_opts:
-        type: 'none'
-        o: 'bind'
-        device: $PWD/data/grafana
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/data/grafana
 
   keycloak-realms:
     driver: local
