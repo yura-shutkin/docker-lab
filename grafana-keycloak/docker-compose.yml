@@ -1,0 +1,120 @@
+---
+version: '2.4'
+
+x-logging-json: &logging-json
+  logging:
+    driver: json-file
+    options:
+      max-file: "1"
+      max-size: "10M"
+
+services:
+  grafana:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}grafana/grafana:${GRAFANA_VERSION}
+    cap_add:
+      - IPC_LOCK
+      - SETFCAP
+      - SETGID
+      - SETUID
+      - CHOWN
+    cap_drop:
+      - ALL
+    ports:
+      - 127.0.0.1:${GRAFANA_FORWARDED_PORT:-3000}:3000
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_LOG_LEVEL: ${GRAFANA_LOG_LEVEL:-info}
+    volumes:
+      - grafana-data:/var/lib/grafana:rw
+      - ${PWD}/conf/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fk", "https://0.0.0.0/api/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    cpu_count: 1
+    mem_limit: 128M
+    restart: unless-stopped
+
+  keycloak:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}keycloak/keycloak:${KEYCLOAK_VERSION}
+    cap_add:
+      - IPC_LOCK
+      - SETFCAP
+      - SETGID
+      - SETUID
+      - CHOWN
+    cap_drop:
+      - ALL
+    ports:
+      - "127.0.0.1:${KEYCLOAK_FORWARDED_PORT:-8080}:8080"
+    volumes:
+      - keycloak-realms:/opt/keycloak/data/import:rw
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: pgsql
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_SCHEMA: public
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
+    entrypoint: ["/opt/keycloak/bin/kc.sh", "start-dev", "--import-realm"]
+    cpu_count: 1
+    mem_limit: 512M
+    restart: unless-stopped
+    depends_on:
+      pgsql:
+        condition: service_healthy
+
+  pgsql:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}postgres:${POSTGRES_VERSION}
+    cap_add:
+      - IPC_LOCK
+      - SETFCAP
+      - SETGID
+      - SETUID
+      - CHOWN
+    cap_drop:
+      - ALL
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data:rw
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD", "pg_isready", "--username=${POSTGRES_USER}", "--dbname=${POSTGRES_DB}", "--host=0.0.0.0", "--port=5432", "--timeout=3"]
+      interval: 30s
+      timeout: 10s
+      retries: 30
+      start_period: 10s
+    cpu_count: 1
+    mem_limit: 128M
+
+volumes:
+  pgsql-data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/data/pgsql
+
+  grafana-data:
+      driver: local
+      driver_opts:
+        type: 'none'
+        o: 'bind'
+        device: $PWD/data/grafana
+
+  keycloak-realms:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/conf/keycloak/realms
