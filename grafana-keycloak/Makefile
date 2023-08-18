@@ -53,9 +53,14 @@ docker-svc-recreate: ## 	Cleanup service's DB and restart it
 	@$(MAKE) create-data-dirs
 	@$(MAKE) docker-svc-start SVC=${SVC}
 
+.PHONY: docker-env-copy-dot
+docker-env-copy-dot: # __hidethis__
+	@if [ ! -f .env ]; then cp -v .env.example .env; fi
+
 .PHONY: docker-env-start
 docker-env-start: ## 	Launch or update project
 	@$(MAKE) create-data-dirs
+	@$(MAKE) docker-env-copy-dot
 	@docker-compose up -d
 
 .PHONY: docker-env-stop
