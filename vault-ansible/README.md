@@ -18,6 +18,7 @@
 
 ## Commands
 
+- `if [ ! -f .env ]; then cp .env.example .env; fi`
 - `docker-compose build`
 - `docker-compose up -d`
 - `docker-compose exec -ti ansible bash`
