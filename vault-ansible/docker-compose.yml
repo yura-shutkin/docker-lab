@@ -1,0 +1,71 @@
+---
+version: '2.4'
+
+x-logging-json: &logging-json
+  logging:
+    driver: json-file
+    options:
+      max-file: "1"
+      max-size: "50M"
+
+services:
+  vault:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}vault:${VAULT_VERSION}
+    cap_add:
+      - IPC_LOCK
+      - SETFCAP
+      - SETGID
+      - SETUID
+      - CHOWN
+    cap_drop:
+      - ALL
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_TOKEN}
+    command: ["vault", "server", "-dev", "-dev-listen-address", "0.0.0.0:8200"]
+    ports:
+      - 127.0.0.1:${VAULT_FORWARDED_PORT}:8200
+
+  ansible:
+    <<: *logging-json
+    image: ${DOCKER_REGISTRY}${REGISTRY_COMMON_STORAGE}python:${PYTHON_VERSION}
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_TOKEN}
+    volumes:
+      - ansible-ssh:/root/.ssh
+      - project-src:/src:rw
+    command: ["sleep", "infinity"]
+
+  mysrv:
+    <<: *logging-json
+    build:
+      context: ./docker/mysrv
+      dockerfile: Dockerfile
+      args:
+        DOCKER_REGISTRY: ${DOCKER_REGISTRY}
+        REGISTRY_COMMON_STORAGE: ${REGISTRY_COMMON_STORAGE}
+        UBUNTU_VERSION: ${UBUNTU_VERSION}
+    volumes:
+      - mysrv-ssh:/root/.ssh
+
+volumes:
+  project-src:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/src
+
+  mysrv-ssh:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/ssh_keys/mysrv
+
+  ansible-ssh:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PWD/ssh_keys/ansible

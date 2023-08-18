@@ -1,0 +1,6 @@
+---
+- name: Setup my servers
+  hosts: srvs
+  become: false
+  roles:
+    - srvconf

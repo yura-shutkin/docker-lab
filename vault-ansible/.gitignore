@@ -1,0 +1,6 @@
+data/
+
+.env
+src/.vault-pass.txt
+src/environment/dev/group_vars/all/vault.yml
+ssh_keys/ansible/known_hosts

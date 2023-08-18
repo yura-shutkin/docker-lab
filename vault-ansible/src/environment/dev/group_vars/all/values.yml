@@ -1,0 +1,8 @@
+---
+vault_addr: http://vault:8200
+approle_role_id: "{{ vault_approle_role_id }}"
+approle_secret_id: "{{ vault_approle_secret_id }}"
+
+api_creds: "{{ lookup('hashi_vault', 'secret=myorg/data/api:data auth_method=approle role_id={{approle_role_id}} secret_id={{approle_secret_id}} url={{vault_addr}}')}}"
+api_user: "{{ api_creds.user }}"
+api_pass: "{{ api_creds.pass }}"

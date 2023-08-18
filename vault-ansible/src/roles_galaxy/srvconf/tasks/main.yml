@@ -1,0 +1,24 @@
+---
+- name: Show role-id
+  debug:
+    var: approle_role_id
+
+- name: Show secret-id
+  debug:
+    var: approle_secret_id
+
+- name: Show user
+  debug:
+    var: api_user
+
+- name: Show pass
+  debug:
+    var: api_pass
+
+- name: Render api.cfg
+  template:
+    src: api.cfg.j2
+    dest: /etc/api.cfg
+    owner: root
+    group: root
+    mode: '0600'
